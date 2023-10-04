@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flash_chat/common/widgets/app_button.dart';
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/registration_screen.dart';
@@ -26,17 +27,20 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 Hero(
                   tag: 'flash_logo',
                   child: SizedBox(
-                    height: 60.0,
+                    height: 75.0,
                     child: Image.asset('images/logo.png'),
                   ),
                 ),
-                const Text(
-                  'Flash Chat Now',
-                  style: TextStyle(
-                    fontSize: 35.0,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
+                AnimatedTextKit(
+                  animatedTexts: [
+                    TypewriterAnimatedText('Flash Chat',
+                        textStyle: const TextStyle(
+                          fontSize: 35.0,
+                          fontWeight: FontWeight.w900,
+                        ),
+                        speed: Duration(milliseconds: 300))
+                  ],
+                )
               ],
             ),
             const SizedBox(height: 48.0),
