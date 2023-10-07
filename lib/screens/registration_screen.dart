@@ -105,14 +105,27 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         context: context,
         type: ToastType.success,
       );
-    } catch (e) {
-      if (context.mounted) {
+    } on FirebaseAuthException catch (e) {
+      if (!context.mounted) return;
+      if (e.code == 'weak-password') {
         showToast(
-          message: e.toString(),
+          message: 'The password provided is too weak.',
+          context: context,
+          type: ToastType.error,
+        );
+      } else if (e.code == 'email-already-in-use') {
+        showToast(
+          message: 'The account already exists for that email.',
           context: context,
           type: ToastType.error,
         );
       }
+    } catch (e) {
+      showToast(
+        message: 'Something went wrong!',
+        context: context,
+        type: ToastType.error,
+      );
     } finally {
       setState(() => loading = false);
     }
