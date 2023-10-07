@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flash_chat/common/toast.dart';
 import 'package:flash_chat/common/widgets/app_button.dart';
 import 'package:flash_chat/common/widgets/app_textfield.dart';
+import 'package:flash_chat/screens/chat_screen.dart';
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,10 @@ class RegistrationScreen extends StatefulWidget {
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _firebaseAuth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
+  bool loading = false;
+
+  TextEditingController emailTextController = TextEditingController();
+  TextEditingController passwordTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -45,12 +50,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   AppTextfield(
                     hintText: "Email Address",
                     keyboardType: TextInputType.emailAddress,
+                    controller: emailTextController,
                     validator:
                         ValidationBuilder().email().maxLength(50).build(),
                   ),
                   const SizedBox(height: 8.0),
                   AppTextfield(
                     hintText: "Password",
+                    controller: passwordTextController,
                     obscureText: true,
                     validator: ValidationBuilder()
                         .required()
@@ -63,6 +70,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   AppButton(
                     label: "Register",
                     onPressed: _handleRegisterUser,
+                    loading: loading,
                   ),
                 ],
               ),
@@ -76,15 +84,38 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void _handleRegisterUser() async {
-    _formKey.currentState!.validate();
-    print("Validating user input");
-    // try {
-    //   final newUser = await _firebaseAuth.createUserWithEmailAndPassword(
-    //       email: "rayhan.dev.bd@gmail.com", password: "rayhan123");
-    //   print(newUser.user!.uid);
-    // } catch (e) {
-    //   print(e.toString());
-    // }
+    // submit after validation
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => loading = true);
+    print("email: ${emailTextController.text}");
+    print("password: ${passwordTextController.text}");
+
+    try {
+      final newUser = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: emailTextController.text,
+        password: passwordTextController.text,
+      );
+      if (!context.mounted) return;
+
+      // TODO: Save user to firestore
+      // TODO: Redirect user to chat screen
+      Navigator.of(context).pushNamed(ChatScreen.id);
+      showToast(
+        message: "Successfully registered",
+        context: context,
+        type: ToastType.success,
+      );
+    } catch (e) {
+      if (context.mounted) {
+        showToast(
+          message: e.toString(),
+          context: context,
+          type: ToastType.error,
+        );
+      }
+    } finally {
+      setState(() => loading = false);
+    }
   }
 
   RichText _bottomText(BuildContext context) {

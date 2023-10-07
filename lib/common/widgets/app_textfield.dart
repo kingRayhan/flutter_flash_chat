@@ -7,6 +7,7 @@ class AppTextfield extends StatelessWidget {
       {Key? key,
       this.controller,
       this.onChanged,
+      this.onSaved,
       this.hintText = "Hint Text",
       this.obscureText = false,
       this.keyboardType,
@@ -14,6 +15,7 @@ class AppTextfield extends StatelessWidget {
       : super(key: key);
 
   Function(String?)? onChanged;
+  Function(String?)? onSaved;
   String? hintText;
   bool? obscureText;
   TextInputType? keyboardType;
@@ -28,6 +30,7 @@ class AppTextfield extends StatelessWidget {
       obscureText: obscureText!,
       keyboardType: keyboardType,
       validator: validator,
+      onSaved: onSaved,
       decoration: InputDecoration(
         hintText: hintText,
         constraints: const BoxConstraints(minHeight: 22),

@@ -1,3 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flash_chat/common/toast.dart';
+import 'package:flash_chat/screens/welcome_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 
@@ -10,6 +13,23 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final _firebaseAuth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    _firebaseAuth.authStateChanges().listen((User? user) {
+      if (user == null) {
+        showToast(
+            message: "You are not logged in",
+            context: context,
+            type: ToastType.error);
+        Navigator.pushNamed(context, WelcomeScreen.id);
+      }
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

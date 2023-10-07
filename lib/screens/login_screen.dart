@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/common/widgets/app_button.dart';
 import 'package:flash_chat/common/widgets/app_textfield.dart';
 import 'package:flash_chat/screens/registration_screen.dart';
@@ -12,6 +13,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _firebaseAuth = FirebaseAuth.instance;
+  final _formKey = GlobalKey<FormState>();
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
